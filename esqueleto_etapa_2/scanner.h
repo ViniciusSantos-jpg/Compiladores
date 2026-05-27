@@ -1,22 +1,27 @@
+#ifndef SCANNER_H
+#define SCANNER_H
+
 #include <fstream>
 #include "token.h"
 
 class Scanner 
 {
     private: 
-        string input;//Armazena o texto de entrada
-        int pos;//Posição atual
-        int line;
+        string input; // Armazena o texto de entrada
+        int pos;      // Posição atual
+        int line;     // Linha atual
     
     public:
-    //Construtor
+        // Construtor
         Scanner(string);
 
         int getLine();
     
-        //Método que retorna o próximo token da entrada
+        // Método que retorna o próximo token da entrada
         Token* nextToken();        
     
-        //Método para manipular erros
+        // Método para manipular erros
         void lexicalError(string);
 };
+
+#endif

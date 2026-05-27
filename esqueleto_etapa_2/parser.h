@@ -5,17 +5,16 @@ class Parser
 	private:
 		Scanner* scanner;
 		Token* lToken;
+		bool hasErrors; // NOVO: Flag para saber se houve erros
 
 		void advance();
 		void match(int);
+		void synchronize(); // NOVO: Função do Modo Pânico
 		
 	public:
 		Parser(string);
 		void run();
-        void program();
-        void declaration();
-        void function();
-        void program();
+		void program();
 		void function();
 		void varDeclaration();
 		void type();
@@ -23,5 +22,6 @@ class Parser
 		void statement();
 		void assign();
 		void expression();
-        void error(string);
+		void term();
+		void error(string);
 };

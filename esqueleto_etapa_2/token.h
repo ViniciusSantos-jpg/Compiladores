@@ -1,5 +1,8 @@
+#ifndef TOKEN_H
+#define TOKEN_H
+
 #include <iostream>
-#include <ctype.h>//Funções de caracteres
+#include <ctype.h>
 #include <string>
 
 using namespace std;
@@ -8,12 +11,26 @@ enum Names
 {
     UNDEF,
     ID,
-    LPARENTHESE,
-    RPARENTHESE,
-    LBRACE,
-    RBRACE,
-    //Continuar
-    //Nomes e atributos dos tokens da linguagem
+    INTEGER_CONSTANT,
+    CHAR_CONSTANT,
+    STRING_CONSTANT,
+    // Operadores
+    PLUS, MINUS, MULT, DIV,
+    ASSIGN, // '='
+    EQ,     // '=='
+    NEQ,    // '!='
+    LTE,    // '<='
+    LT,     // '<'
+    GTE,    // '>='
+    GT,     // '>'
+    AND,    // '&&'
+    OR,     // '||'
+    NOT,    // '!'
+    // Separadores
+    LPARENTHESE, RPARENTHESE, // ( )
+    LBRACE, RBRACE,           // { }
+    LBRACKET, RBRACKET,       // [ ]
+    COMMA, SEMICOLON,         // , ;
     END_OF_FILE
 };
 
@@ -43,3 +60,5 @@ class Token
             attribute = attr;
         }
 };
+
+#endif

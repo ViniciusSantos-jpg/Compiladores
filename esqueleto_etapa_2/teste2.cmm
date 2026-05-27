@@ -1,0 +1,24 @@
+int calcular(int a, int b) {
+    int resultado;
+    resultado = a + b;
+    return resultado;
+}
+
+void main(void) {
+    int i, x
+    x = 0;
+    
+    // Testando o laco for e if
+    for (i = 0; i < 10; i = i + 1) {
+        if (i == 5) {
+            x = calcular(x, i);
+        } else {
+            x === x + 1;
+        }
+    }
+    
+    // Testando o laco while
+    while (x != 0) {
+        x = x - 1
+    }
+}
