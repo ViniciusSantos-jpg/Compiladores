@@ -41,12 +41,106 @@ Scanner::getLine()
 Token* 
 Scanner::nextToken()
 {
-    Token* tok;
-    string lexeme;
+    // scanner.cpp (dentro de Scanner::nextToken())
+Token* tok;
+string lexeme = "";
 
-    //TODO
+while (pos < input.length()) {
+    char c = input[pos];
 
-    return tok;
+    // 1. Ignorar espaços em branco e contar linhas
+    if (isspace(c)) {
+        if (c == '\n') line++;
+        pos++;
+        continue;
+    }
+
+    // 2. Ignorar comentários (em linha // e em bloco /* */)
+    if (c == '/' && pos + 1 < input.length()) {
+        if (input[pos + 1] == '/') {
+            while (pos < input.length() && input[pos] != '\n') {
+                pos++;
+            }
+            continue;
+        } else if (input[pos + 1] == '*') {
+            pos += 2;
+            while (pos + 1 < input.length() && !(input[pos] == '*' && input[pos + 1] == '/')) {
+                if (input[pos] == '\n') line++;
+                pos++;
+            }
+            pos += 2; // Pula o "*/"
+            continue;
+        }
+    }
+
+    // 3. Identificadores (letter (letter | digit | _)*)
+    if (isalpha(c)) {
+        while (pos < input.length() && (isalnum(input[pos]) || input[pos] == '_')) {
+            lexeme += input[pos++];
+        }
+        return new Token(ID, lexeme);
+    }
+
+    // 4. Constantes Numéricas (digit+)
+    if (isdigit(c)) {
+        while (pos < input.length() && isdigit(input[pos])) {
+            lexeme += input[pos++];
+        }
+        return new Token(INTEGER_CONSTANT, lexeme);
+    }
+
+    // 5. Constantes de String ("...")
+    if (c == '"') {
+        lexeme += input[pos++];
+        while (pos < input.length() && input[pos] != '"' && input[pos] != '\n') {
+            lexeme += input[pos++];
+        }
+        if (input[pos] == '"') {
+            lexeme += input[pos++];
+            return new Token(STRING_CONSTANT, lexeme);
+        } else {
+            lexicalError("String mal formada");
+        }
+    }
+
+    // 6. Separadores e Operadores simples e compostos (==, !=, <=, >=, &&, ||)
+    switch(c) {
+        case '(': pos++; return new Token(LPARENTHESE);
+        case ')': pos++; return new Token(RPARENTHESE);
+        case '{': pos++; return new Token(LBRACE);
+        case '}': pos++; return new Token(RBRACE);
+        case '[': pos++; return new Token(LBRACKET);
+        case ']': pos++; return new Token(RBRACKET);
+        case ',': pos++; return new Token(COMMA);
+        case ';': pos++; return new Token(SEMICOLON);
+        case '+': pos++; return new Token(PLUS);
+        case '-': pos++; return new Token(MINUS);
+        case '*': pos++; return new Token(MULT);
+        case '/': pos++; return new Token(DIV);
+        case '=': 
+            if(input[pos+1] == '=') { pos+=2; return new Token(EQ); }
+            else { pos++; /* Se = for atribuição, crie o token ASSIGN */ }
+            break;
+        case '!':
+            if(input[pos+1] == '=') { pos+=2; return new Token(NEQ); }
+            else { pos++; return new Token(NOT); }
+            break;
+        case '<':
+            if(input[pos+1] == '=') { pos+=2; return new Token(LTE); }
+            else { pos++; return new Token(LT); }
+            break;
+        case '>':
+            if(input[pos+1] == '=') { pos+=2; return new Token(GTE); }
+            else { pos++; return new Token(GT); }
+            break;
+        // Continue para && (AND) e || (OR)...
+    }
+
+    // Se chegou até aqui, é um caractere inválido
+    lexicalError("Caractere invalido: " + string(1, c));
+}
+
+return new Token(END_OF_FILE);
  
 }
 

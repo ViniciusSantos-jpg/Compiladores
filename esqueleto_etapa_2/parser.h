@@ -15,6 +15,13 @@ class Parser
         void program();
         void declaration();
         void function();
-        //Continuar....
+        void program();
+		void function();
+		void varDeclaration();
+		void type();
+		void paramTypes();
+		void statement();
+		void assign();
+		void expression();
         void error(string);
 };
