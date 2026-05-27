@@ -1,5 +1,5 @@
 #include <iostream>
-#include <ctype.h>//Funções de caracteres
+#include <ctype.h>
 #include <string>
 
 using namespace std;

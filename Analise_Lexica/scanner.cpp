@@ -24,9 +24,6 @@ Scanner::Scanner(string input)
     else 
         cout << "Unable to open file\n"; 
 
-    //A próxima linha deve ser comentada posteriormente.
-    //Ela é utilizada apenas para verificar se o 
-    //preenchimento de input foi feito corretamente.
     cout << this->input;
 
 }
@@ -136,7 +133,6 @@ while (pos < input.length()) {
         // Continue para && (AND) e || (OR)...
     }
 
-    // Se chegou até aqui, é um caractere inválido
     lexicalError("Caractere invalido: " + string(1, c));
 }
 

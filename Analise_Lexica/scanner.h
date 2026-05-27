@@ -14,7 +14,6 @@ class Scanner
 
         int getLine();
     
-        //Método que retorna o próximo token da entrada
         Token* nextToken();        
     
         //Método para manipular erros

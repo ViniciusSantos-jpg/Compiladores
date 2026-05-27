@@ -5,11 +5,11 @@ class Parser
 	private:
 		Scanner* scanner;
 		Token* lToken;
-		bool hasErrors; // NOVO: Flag para saber se houve erros
+		bool hasErrors;
 
 		void advance();
 		void match(int);
-		void synchronize(); // NOVO: Função do Modo Pânico
+		void synchronize();
 		
 	public:
 		Parser(string);
