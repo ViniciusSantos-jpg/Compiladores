@@ -2,13 +2,13 @@
 
 Este repositório contém a implementação das etapas de **Análise Léxica** e **Análise Sintática** de um compilador para a linguagem **C--**. Projeto desenvolvido em C++ como trabalho prático da disciplina de Compiladores I.
 
-## ⚙️ Funcionalidades Implementadas
+## Funcionalidades
 
 - **Analisador Léxico (Scanner):** Lê o código-fonte `.cmm`, ignora espaços e comentários (em linha e bloco), e converte cadeias de caracteres em *Tokens* válidos da gramática.
 - **Analisador Sintático (Parser):** Implementação de um analisador preditivo descendente recursivo (Top-Down) que valida a estrutura do código com base nas regras gramaticais de C--.
 - **Recuperação de Erros (Modo Pânico):** Implementação de *Panic Mode* para recuperação de erros sintáticos. O compilador não aborta no primeiro erro encontrado; ele reporta a linha e o contexto exatos, ressincroniza a análise em delimitadores seguros (como `;` ou chaves) e continua o processo para listar todos os erros estruturais.
 
-## 📂 Estrutura do Repositório
+## Estrutura do Repositório
 
 ```text
 COMPILADORES/
@@ -23,7 +23,7 @@ COMPILADORES/
 └── README.md
 ```
 
-## 🚀 Como Compilar e Executar
+## Como Compilar e Executar
 
 **Pré-requisitos:** O projeto foi desenvolvido para ser executado em ambientes Linux/Unix (ou WSL no Windows). É necessário ter o compilador `g++` e a ferramenta `make` instalados.
 
