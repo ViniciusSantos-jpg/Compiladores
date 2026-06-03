@@ -6,7 +6,7 @@ Scanner::Scanner(string input)
 {
     pos = 0;
     line = 1;
-
+    st = new TabelaDeSimbolos();
     ifstream inputFile(input, ios::in);
     string fileLine;
 

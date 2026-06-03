@@ -1,0 +1,20 @@
+// teste5.cmm - Teste do Modo Panico (Recuperacao de Erros)
+
+int soma(int a, int b {  // Faltou fechar o parenteses ')' aqui
+    return a + b;
+}
+
+void main(void) {
+    int x, y   // Faltou o ';' aqui
+    
+    x = 10;
+    y = 20;
+    
+    if (x > y) {
+        x = x + 1;
+    // Faltou a chave '}' para fechar o if aqui
+    
+    while (x < 50) {
+        x = soma(x, y);
+    }
+}

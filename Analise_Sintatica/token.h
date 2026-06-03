@@ -14,6 +14,9 @@ enum Names
     INTEGER_CONSTANT,
     CHAR_CONSTANT,
     STRING_CONSTANT,
+    // Palavras Reservadas (As que faltavam!)
+    INT, CHAR, VOID, 
+    IF, ELSE, WHILE, FOR, RETURN,
     // Operadores
     PLUS, MINUS, MULT, DIV,
     ASSIGN, // '='

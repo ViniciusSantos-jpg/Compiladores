@@ -1,0 +1,26 @@
+// teste4.cmm - Algoritmo de Fatorial com Recursao e Arrays
+
+int fatorial(int n) {
+    if (n == 0) {
+        return 1;
+    } else {
+        return n * fatorial(n - 1);
+    }
+}
+
+void main(void) {
+    int numeros[5];
+    int i, resultado;
+    
+    // Preenchendo o array
+    for (i = 0; i < 5; i = i + 1) {
+        numeros[i] = i;
+    }
+    
+    // Calculando o fatorial do ultimo elemento
+    i = 4;
+    while (i >= 0) {
+        resultado = fatorial(numeros[i]);
+        i = i - 1;
+    }
+}

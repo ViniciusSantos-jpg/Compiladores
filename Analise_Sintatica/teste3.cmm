@@ -1,0 +1,13 @@
+// teste3.cmm - Testando a Tabela de Simbolos
+
+void main(void) {
+    // Erro 1: Tentando usar 'if' como nome de variavel
+    int if;
+    
+    // Erro 2: Tentando usar 'return' como variavel
+    int x;
+    return = 10;
+    
+    // Erro 3: Tentando usar 'void' como parametro de um array
+    x[void] = 5;
+}
