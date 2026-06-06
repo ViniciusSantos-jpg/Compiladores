@@ -67,6 +67,14 @@ Token* Scanner::nextToken()
             while (pos < input.length() && (isalnum(input[pos]) || input[pos] == '_')) {
                 lexeme += input[pos++];
             }
+            
+            int tokenName = st->find(lexeme);
+            if (tokenName != UNDEF) {
+                // Se for palavra reservada, retorna o token dela (ex: IF, INT)
+                return new Token(tokenName, lexeme);
+            }
+            
+            // Se não for reservada, é um ID comum
             return new Token(ID, lexeme);
         }
 

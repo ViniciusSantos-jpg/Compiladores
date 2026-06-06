@@ -3,12 +3,14 @@
 Parser::Parser(string input)
 {
 	scanner = new Scanner(input);
-	hasErrors = false; // Inicializa sem erros
+	hasErrors = false; 
+    lastErrorLine = 0;
+    linhaAnterior = 1;
 }
 
-void
-Parser::advance()
+void Parser::advance()
 {
+    linhaAnterior = scanner->getLine(); // Salva a linha antes de avançar
 	lToken = scanner->nextToken();
 }
 
@@ -36,13 +38,11 @@ Parser::program()
 
 void Parser::function()
 {
-    // Regra 2: Type ID (ParamTypes) { ... } ou void ID (ParamTypes) { ... }
-    
     // Verifica se é 'void' ou um 'Type' (int, char)
-    if (lToken->name == ID && (lToken->lexeme == "int" || lToken->lexeme == "char")) {
+    if (lToken->name == INT || lToken->name == CHAR) {
         type();
-    } else if (lToken->name == ID && lToken->lexeme == "void") {
-        match(ID); // Consome o 'void'
+    } else if (lToken->name == VOID) {
+        match(VOID); // Consome o 'void'
     } else {
         error("Esperado tipo de retorno ou void");
     }
@@ -54,7 +54,7 @@ void Parser::function()
     match(LBRACE);       // {
 
     // (Type VarDeclaration(, VarDeclaration)*;)*
-    while (lToken->name == ID && (lToken->lexeme == "int" || lToken->lexeme == "char")) {
+    while (lToken->name == INT || lToken->name == CHAR) {
         type();
         varDeclaration();
         while (lToken->name == COMMA) {
@@ -74,53 +74,41 @@ void Parser::function()
 
 void Parser::type()
 {
-    if (lToken->name == ID && (lToken->lexeme == "int" || lToken->lexeme == "char")) {
-        match(ID);
+    if (lToken->name == INT || lToken->name == CHAR) {
+        advance();
     } else {
         error("Esperado tipo 'int' ou 'char'");
-        synchronize(); // RECUPERA O ERRO AQUI!
+        synchronize(); 
     }
 }
 
 void Parser::error(string str)
 {
-    string tokenStr = lToken->lexeme;
+    // Pega a linha atual do Scanner
+    int linhaDoErro = scanner->getLine();
     
-    // Se o token for um operador ou símbolo que não salva lexema na Etapa 1, definimos o texto manualmente
-    if (tokenStr.empty()) {
-        switch(lToken->name) {
-            case EQ: tokenStr = "=="; break;
-            case NEQ: tokenStr = "!="; break;
-            case ASSIGN: tokenStr = "="; break;
-            case PLUS: tokenStr = "+"; break;
-            case MINUS: tokenStr = "-"; break;
-            case MULT: tokenStr = "*"; break;
-            case DIV: tokenStr = "/"; break;
-            case SEMICOLON: tokenStr = ";"; break;
-            case COMMA: tokenStr = ","; break;
-            case LPARENTHESE: tokenStr = "("; break;
-            case RPARENTHESE: tokenStr = ")"; break;
-            case LBRACE: tokenStr = "{"; break;
-            case RBRACE: tokenStr = "}"; break;
-            case LBRACKET: tokenStr = "["; break;
-            case RBRACKET: tokenStr = "]"; break;
-            case END_OF_FILE: tokenStr = "fim de arquivo"; break;
-            default: tokenStr = "token desconhecido"; break;
-        }
+    // Se o erro for a falta de um ponto e vírgula, o erro real foi na linha de cima!
+    if (str == "esperado ';'") {
+        linhaDoErro = linhaAnterior;
     }
     
-    // Padrão de saída do g++
-    cout << "linha " << scanner->getLine() << ": erro: " << str 
-         << " antes de '" << tokenStr << "'" << endl;
+    // Só imprime se o erro for numa linha diferente do último erro
+    if (linhaDoErro != lastErrorLine) {
+        
+        // Mensagem limpa: "linha X: erro: Y"
+        cout << "linha " << linhaDoErro << ": erro: " << str << endl;
+        
+        lastErrorLine = linhaDoErro; // Atualiza a última linha que deu erro
+    }
     
     hasErrors = true;
 }
 
+
 void Parser::paramTypes()
 {
-    // Regra 5: ParamTypes -> void | Type ID ([])? (, Type ID ([])?)*
-    if (lToken->name == ID && lToken->lexeme == "void") {
-        match(ID);
+    if (lToken->name == VOID) {
+        match(VOID);
     } else {
         type();
         match(ID);
@@ -143,34 +131,34 @@ void Parser::paramTypes()
 void Parser::statement()
 {
     // Regra 6: Statement
-    if (lToken->name == ID && lToken->lexeme == "if") {
-        match(ID);
+    if (lToken->name == IF) {
+        match(IF);
         match(LPARENTHESE);
         expression();
         match(RPARENTHESE);
         statement();
-        if (lToken->name == ID && lToken->lexeme == "else") {
-            match(ID);
+        if (lToken->name == ELSE) {
+            match(ELSE);
             statement();
         }
-    } else if (lToken->name == ID && lToken->lexeme == "while") {
-        match(ID);
+    } else if (lToken->name == WHILE) {
+        match(WHILE);
         match(LPARENTHESE);
         expression();
         match(RPARENTHESE);
         statement();
-    } else if (lToken->name == ID && lToken->lexeme == "for") {
-        match(ID);
+    } else if (lToken->name == FOR) {
+        match(FOR);
         match(LPARENTHESE);
-        if (lToken->name == ID && lToken->lexeme != "int" && lToken->lexeme != "char") assign();
+        if (lToken->name == ID) assign(); // Simplificado
         match(SEMICOLON);
         if (lToken->name != SEMICOLON) expression();
         match(SEMICOLON);
         if (lToken->name != RPARENTHESE) assign();
         match(RPARENTHESE);
         statement();
-    } else if (lToken->name == ID && lToken->lexeme == "return") {
-        match(ID);
+    } else if (lToken->name == RETURN) {
+        match(RETURN);
         if (lToken->name != SEMICOLON) {
             expression();
         }
@@ -188,6 +176,7 @@ void Parser::statement()
         match(SEMICOLON);
     } else {
         error("Statement invalido");
+        advance();
     }
 }
 
@@ -242,14 +231,15 @@ void Parser::term()
             }
             match(RPARENTHESE);
         } else if (lToken->name == LBRACKET) { // Acesso a array
-            match(LBRACKET);
-            expression();
-            match(RBRACKET);
+                match(LBRACKET);
+                expression();
+                match(RBRACKET);
+            }
+        } else {
+            error("expressao invalida");
+            advance();
+            synchronize(); 
         }
-    } else {
-        error("expressao invalida");
-        synchronize(); // Adicionado para recuperar erros dentro de expressões
-    }
 }
 
 void Parser::synchronize()
@@ -259,14 +249,12 @@ void Parser::synchronize()
             return;
         }
         
-        if (lToken->name == ID) {
-            string lex = lToken->lexeme;
-            if (lex == "int" || lex == "char" || lex == "void" || 
-                lex == "if" || lex == "while" || lex == "for" || lex == "return") {
-                return;
-            }
+        // Verifica se é uma palavra reservada que inicia bloco
+        if (lToken->name == INT || lToken->name == CHAR || lToken->name == VOID || 
+            lToken->name == IF || lToken->name == WHILE || lToken->name == FOR || lToken->name == RETURN) {
+            return;
         }
-        advance(); // Descarta o token problemático e avança para o próximo
+        advance(); 
     }
 }
 
@@ -275,7 +263,6 @@ void Parser::match(int t)
     if (lToken->name == t || lToken->attribute == t) {
         advance();
     } else {
-        // O match agora sabe exatamente o que faltou e manda a mensagem pronta
         if (t == SEMICOLON) {
             error("esperado ';'");
         } else if (t == RPARENTHESE) {

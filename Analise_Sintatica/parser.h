@@ -6,10 +6,13 @@ class Parser
 		Scanner* scanner;
 		Token* lToken;
 		bool hasErrors;
+		int lastErrorLine;
+		int linhaAnterior;
 
 		void advance();
 		void match(int);
 		void synchronize();
+		
 		
 	public:
 		Parser(string);
